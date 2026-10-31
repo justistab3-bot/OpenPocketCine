@@ -24,7 +24,7 @@ permissions:
 jobs:
   gradle:
     name: Gradle
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
       # Inputs reach the shell only through env and are checked before any use.
@@ -55,7 +55,7 @@ jobs:
       # The pin at this commit decides the OpenCine checkout, so a snapshot that moves the pin
       # builds against the moved pin.
       - name: Check out pinned OpenCine next to the repository
-        run: scripts/checkout-opencine.sh
+        run: scripts/checkout-opencine.sh https://github.com/justistab3-bot
       - name: Set up Android NDK 27
         uses: nttld/setup-ndk@ed92fe6cadad69be94a966a7ee3271275e62f779 # v1.6.0
         with:
@@ -82,7 +82,7 @@ jobs:
           for root in . ../OpenCine; do
             [ -d "$root" ] || continue
             rsync -a --prune-empty-dirs --exclude='.git/' --exclude='.gradle/' --include='*/' \
-              --include='**/build/reports/**' --include='**/build/test-results/**' --exclude='*' \
+              --include='**/build/reports/**' --include='**/build/test-results/**' --include='**/build/outputs/apk/**' --exclude='*' \
               "$root/" "$out/$(basename "$(cd "$root" && pwd)")/"
           done
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
