@@ -1,6 +1,8 @@
 package com.opencapture.openpocketcine.multiview
 
-import com.opencapture.openpocketcine.R
+import com.opencapture.openpocketcine.pocketText
+import com.opencapture.openpocketcine.pocketFormat
+
 import android.graphics.Bitmap
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +22,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
-import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -84,10 +85,10 @@ internal fun multiviewSettingsLocked(sheet: LiveSheet, recording: Boolean): Bool
     recording && sheet in listOf(LiveSheet.FORMAT, LiveSheet.COLOR, LiveSheet.MODE)
 
 private fun LiveSheet.settingsLabel(): String = when (this) {
-    LiveSheet.EXPO -> "Exposure"
-    LiveSheet.WB -> "WB"
+    LiveSheet.EXPO -> pocketText("Exposure")
+    LiveSheet.WB -> pocketText("WB")
     LiveSheet.ISO -> "ISO"
-    else -> name.lowercase().replaceFirstChar { it.uppercase() }
+    else -> pocketText(name.lowercase(java.util.Locale.ROOT).replaceFirstChar { it.uppercase() })
 }
 
 /** Live View's gimbal side panel with camera tabs on top, category rail on the right and native pickers. */
@@ -120,7 +121,7 @@ internal fun MultiviewCameraSettings(
     val ready = camera != null && controls != null && available
     // Live View's gimbal side panel container: trailing edge, width, glass, reveal and tap-outside dismissal.
     MonitorInspector(
-        title = stringResource(R.string.multiview_camera_settings),
+        title = pocketText("Camera settings"),
         viewportWidth = width,
         viewportHeight = height,
         onDismiss = onDismiss,
@@ -135,7 +136,7 @@ internal fun MultiviewCameraSettings(
             // Inset from the panel corner; the 48dp target overflows the one-line header.
             Box(Modifier.padding(end = 8.dp).height(20.dp).wrapContentHeight(unbounded = true)) {
                 Box(Modifier.size(48.dp).chromeClickable(onClick = onDismiss)
-                    .semantics { contentDescription = "Close camera settings"; role = Role.Button },
+                    .semantics { contentDescription = pocketText("Close camera settings"); role = Role.Button },
                     contentAlignment = Alignment.Center) {
                     MonitorIcon(MonitorIcon.X, null, Modifier.size(13.dp), LiveDesign.muted)
                 }
@@ -207,12 +208,8 @@ internal fun MultiviewCameraSettings(
                     }
                 }
             } else {
-                Text(
-                    if (tile?.recovering == true) {
-                        stringResource(R.string.multiview_reconnect_before_settings)
-                    } else {
-                        stringResource(R.string.multiview_settings_need_connection)
-                    },
+                Text(if (tile?.recovering == true) pocketText("Reconnect this camera before changing settings.")
+                    else pocketText("Camera settings are available when its connection is ready."),
                     color = LiveDesign.muted, style = LiveType.text(13f), modifier = Modifier.padding(vertical = 16.dp))
             }
         }
@@ -242,6 +239,6 @@ private fun MultiviewSettingsPreview(tile: MultiviewSession.Tile, modifier: Modi
     }
     com.opencapture.opencine.cameracontrols.MonitorOperatorInspectorImagePreview(
         com.opencapture.monitorui.MonitorAssistTool.LUT, null, client, tile.plan,
-        tile, null, false, modifier, "${tile.camera?.name ?: "Camera"} preview",
+        tile, null, false, modifier, pocketFormat("%s preview", tile.camera?.name ?: pocketText("Camera")),
         com.opencapture.opencine.cameracontrols.MonitorInspectorPreviewLayout.SOURCE)
 }

@@ -8,6 +8,14 @@ HEVC/AVC live view, GPU looks, scopes, camera writes, and media. The public beta
 Google Play is open — [join the Android beta](https://play.google.com/store/apps/details?id=com.opencapture.openpocketcine&hl=en-US&ah=mXzHtdYCMQTB83vt0jIRLnOOZaA). iOS is the daily driver. arm64
 phones, Android 10 or newer.
 
+## 简体中文版（本地构建）
+
+简体中文版默认显示中文，覆盖配对、相机列表、监看控件、设置、素材回放和多机位。
+相机名称、Wi-Fi 名称、文件名、产品名称和技术单位保留原文；尚未翻译的提示使用英文。
+此版本仅适用于 Android 10 及以上的 arm64 手机，iOS 不包含此次汉化。
+本地调试包可与官方应用并存，使用独立的数据目录，相机需要重新配对。
+相机连接及真机使用效果由使用者反馈。
+
 If pairing or live view fails, tap **Report a problem** on the pairing screen or
 in **Operator Setup → System**. It works before your first successful pairing;
 technical details and a reply email are optional. For a local diagnostic export,

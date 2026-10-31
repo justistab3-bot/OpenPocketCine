@@ -27,6 +27,7 @@ import com.opencapture.opencine.vocabulary.ConnectionPhase
 import com.opencapture.openpocketcine.diagnostics.AppDiagnostics
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
@@ -58,7 +59,6 @@ import com.opencapture.opencine.appkit.PairingWizard
 import com.opencapture.opencine.platform.LocalVPNProbe
 import com.opencapture.openpocketcine.diagnostics.ManualProblemReportDialog
 import com.opencapture.opencine.appkit.DiscoveryPermissions
-import com.opencapture.openpocketcine.pairing.AppPairingCopy
 import com.opencapture.openpocketcine.pairing.PairingCallouts
 import com.opencapture.opencine.appkit.PermissionGate
 import com.opencapture.openpocketcine.pairing.rememberPermissionGate
@@ -75,6 +75,10 @@ open class MainActivity : ComponentActivity() {
 
     fun updateSystemBars() {
         applyMonitorSystemBars(window, hideSystemNavigation || playbackHidesSystemNavigation)
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(newBase.pocketChineseContext())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -236,21 +240,20 @@ internal fun pairingWizard(
     radioOn: Boolean,
 ) = PairingWizard(
     bodies = listOf(
-        AppPairingCopy.text(
-                    "Turn the camera on and keep the phone nearby. Pocket and Nano both appear. Choose the one you want."),
-        "If the camera shows Approve, tap it on that camera's screen. First-time pairing can wait up to 90 seconds.",
-        "We read the camera's network over Bluetooth, then join its Wi-Fi for you.",
-        "Exposure, LUTs and scopes go live as soon as the video link is up.",
+        pocketText("Turn the camera on and keep the phone nearby. Pocket and Nano both appear. Choose the one you want."),
+        pocketText("If the camera shows Approve, tap it on that camera's screen. First-time pairing can wait up to 90 seconds."),
+        pocketText("We read the camera's network over Bluetooth, then join its Wi-Fi for you."),
+        pocketText("Exposure, LUTs and scopes go live as soon as the video link is up."),
     ),
-    approveLines = listOf("Look for an Approve / pairing prompt", "Tap it on the camera screen"),
-    joinLines = listOf("Leave the camera on. It brings up its own Wi-Fi", "On 5.8 GHz that can take about a minute; we keep trying"),
+    approveLines = listOf(pocketText("Look for an Approve / pairing prompt"), pocketText("Tap it on the camera screen")),
+    joinLines = listOf(pocketText("Leave the camera on. It brings up its own Wi-Fi"), pocketText("On 5.8 GHz that can take about a minute; we keep trying")),
     label = label,
     joinedNetwork = joinedNetwork,
     vpnActive = vpnActive,
     blocker = when {
-        !granted && needsSettings -> "Open Settings"
-        !granted -> "Allow ${DiscoveryPermissions.settingsName(DiscoveryPermissions.discovery()).lowercase()}"
-        !radioOn -> "Turn Bluetooth on"
+        !granted && needsSettings -> pocketText("Open Settings")
+        !granted -> pocketText("Allow ${DiscoveryPermissions.settingsName(DiscoveryPermissions.discovery()).lowercase(java.util.Locale.ROOT)}")
+        !radioOn -> pocketText("Turn Bluetooth on")
         else -> null
     },
 )

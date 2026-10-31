@@ -1,5 +1,16 @@
 # Operator parity
 
+## Simplified Chinese Android edition (2026-10-31)
+
+This local edition defaults the Android shell to Simplified Chinese, including
+pairing, saved cameras, monitoring controls, settings, playback and Multiview.
+Translations resolve at the display boundary; camera names, Wi-Fi names,
+filenames, stored preferences and protocol values retain their original values.
+Unknown copy falls back to English. Product names and technical units remain
+unchanged. The iOS shell is excluded at the request of this edition's user.
+Physical verification is deferred to that user; no camera or phone verification
+is claimed for this edition.
+
 iOS is the operator-proven baseline. Android matches operator-visible behavior
 unless a row lists an exception. GPU backends, Bluetooth stacks, and OS APIs may
 diverge. Shipping a one-platform operator-visible change without a row here is

@@ -100,7 +100,7 @@ android {
             // debug build can never replace it. A distinct id installs beside it and
             // keeps both available for side-by-side qualification on one body.
             applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
+            versionNameSuffix = "-zh"
         }
         release {
             isMinifyEnabled = true

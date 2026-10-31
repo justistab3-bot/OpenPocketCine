@@ -1,5 +1,7 @@
 package com.opencapture.openpocketcine.multiview
 
+import com.opencapture.openpocketcine.pocketText
+
 import com.opencapture.opencine.appkit.MultiviewCameraAction
 import com.opencapture.opencine.appkit.MultiviewReadout
 import com.opencapture.opencine.appkit.MultiviewRecordContext
@@ -41,12 +43,12 @@ internal fun multiviewTileReadouts(
 ): MultiviewTileReadouts {
     val elapsed = settings.recordElapsedSec.coerceAtLeast(0)
     val recording = when {
-        recordingBusy -> "WAIT"
+        recordingBusy -> pocketText("WAIT")
         recordingNote?.contains("rejected") == true || recordingNote?.contains("No confirmation") == true -> "REC ?"
-        recovering -> "HOLD"
+        recovering -> pocketText("HOLD")
         !recordingAvailable || recordingObservation == null -> "REC —"
         recordingObservation -> "REC ${elapsed / 60}:${(elapsed % 60).toString().padStart(2, '0')}"
-        else -> "STBY"
+        else -> pocketText("STBY")
     }
     val resolution = VideoResolution.fromRaw(settings.resolutionCode)?.label ?: "—"
     val fps = if (settings.fps > 0) "${settings.fps}p" else "—"
@@ -59,9 +61,9 @@ internal fun multiviewTileReadouts(
         recording = recording, isRecording = recordingObservation == true,
         format = "$resolution · $fps · $color",
         recovery = when {
-            failure != null -> "Connection needs attention"
-            recovering -> "Restoring picture…"
-            !hasPicture -> "Waiting for picture…"
+            failure != null -> pocketText("Connection needs attention")
+            recovering -> pocketText("Restoring picture…")
+            !hasPicture -> pocketText("Waiting for picture…")
             else -> null
         },
     )
@@ -69,14 +71,14 @@ internal fun multiviewTileReadouts(
 
 internal fun multiviewExposureReadouts(settings: CameraStatus): List<Pair<String, String>> = listOf(
     "ISO" to if (settings.iso > 0) settings.iso.toString() else "—",
-    "SHUTTER" to if (settings.shutterDenom > 0) "1/${settings.shutterDenom}" else "—",
-    "WB" to when {
-        settings.wbMode == CameraCommands.WB_AUTO -> "Auto"
+    pocketText("SHUTTER") to if (settings.shutterDenom > 0) "1/${settings.shutterDenom}" else "—",
+    pocketText("WB") to when {
+        settings.wbMode == CameraCommands.WB_AUTO -> pocketText("Auto")
         settings.wbMode < 0 -> "—"
         settings.wbKelvin > 0 -> "${settings.wbKelvin}K"
         else -> "—"
     },
-    "FOCUS" to settings.focusLabel,
+    pocketText("FOCUS") to settings.focusLabel,
 )
 
 /** The program readouts and Grid's in-tile row. */
@@ -113,37 +115,37 @@ internal fun MultiviewSession.stageTile(index: Int): MultiviewTile? {
         readouts = multiviewStageReadouts(tile.settings),
         status = readouts.recovery?.let { text ->
             MultiviewTileStatus(
-                text, detail = tile.failureMessage ?: tile.status,
+                text, detail = pocketText(tile.failureMessage ?: tile.status),
                 inProgress = tile.failureMessage == null && !tile.networkVerified,
                 actions = if (tile.failureMessage == null) emptyList() else listOfNotNull(
-                    MultiviewCameraAction(MultiviewTileAction.EXPERIMENTAL, "Try experimental shared Wi-Fi", enabled = settled)
+                    MultiviewCameraAction(MultiviewTileAction.EXPERIMENTAL, pocketText("Try experimental shared Wi-Fi"), enabled = settled)
                         .takeIf { experimental },
-                    MultiviewCameraAction(MultiviewTileAction.RECONNECT, "Reconnect", enabled = settled),
+                    MultiviewCameraAction(MultiviewTileAction.RECONNECT, pocketText("Reconnect"), enabled = settled),
                     MultiviewCameraAction(
-                        MultiviewTileAction.REMOVE, "Remove", MultiviewCameraAction.Kind.DESTRUCTIVE, enabled = settled,
+                        MultiviewTileAction.REMOVE, pocketText("Remove"), MultiviewCameraAction.Kind.DESTRUCTIVE, enabled = settled,
                     ),
                 ),
             )
         },
-        failure = tile.failureMessage,
-        footnote = "Remove this tile to enable Record all for your other cameras."
+        failure = tile.failureMessage?.let(::pocketText),
+        footnote = pocketText("Remove this tile to enable Record all for your other cameras.")
             .takeIf { tile.networkVerified && !camera.hasMultiviewPreview },
         actions = listOfNotNull(
             MultiviewCameraAction(
-                MultiviewCameraAction.LIVE_VIEW, "Open Live View", enabled = tile.controlHost != null && !tile.connecting,
+                MultiviewCameraAction.LIVE_VIEW, pocketText("Open Live View"), enabled = tile.controlHost != null && !tile.connecting,
             ),
             MultiviewCameraAction(
                 MultiviewTileAction.RECORD,
-                if (tile.recordingObservation?.first == true) "Stop recording" else "Start recording",
+                if (tile.recordingObservation?.first == true) pocketText("Stop recording") else pocketText("Start recording"),
                 MultiviewCameraAction.Kind.RECORD,
                 enabled = record.isExecutable && !groupRecordingBusy && !closing,
             ),
-            MultiviewCameraAction(MultiviewTileAction.LUT, if (tile.lutEnabled) "Disable Auto LUT" else "Enable Auto LUT"),
-            MultiviewCameraAction(MultiviewTileAction.RECONNECT, "Reconnect", enabled = settled),
-            MultiviewCameraAction(MultiviewTileAction.EXPERIMENTAL, "Try experimental shared Wi-Fi", enabled = settled)
+            MultiviewCameraAction(MultiviewTileAction.LUT, if (tile.lutEnabled) pocketText("Disable Auto LUT") else pocketText("Enable Auto LUT")),
+            MultiviewCameraAction(MultiviewTileAction.RECONNECT, pocketText("Reconnect"), enabled = settled),
+            MultiviewCameraAction(MultiviewTileAction.EXPERIMENTAL, pocketText("Try experimental shared Wi-Fi"), enabled = settled)
                 .takeIf { experimental },
             MultiviewCameraAction(
-                MultiviewTileAction.REMOVE, "Remove camera", MultiviewCameraAction.Kind.DESTRUCTIVE,
+                MultiviewTileAction.REMOVE, pocketText("Remove camera"), MultiviewCameraAction.Kind.DESTRUCTIVE,
                 enabled = !busy && !tile.connecting && !groupRecordingBusy && !tile.recordingBusy && !closing,
             ),
         ),

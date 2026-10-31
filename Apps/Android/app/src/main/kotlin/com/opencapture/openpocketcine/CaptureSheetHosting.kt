@@ -3,7 +3,6 @@ package com.opencapture.openpocketcine
 import com.opencapture.opencine.cameracontrols.*
 
 import androidx.compose.material3.Text
-import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -62,7 +61,7 @@ internal fun AppModel.observedCaptureSessionState(status: CameraStatus): Capture
 internal fun AppModel.PocketCommonDrum(sheet: LiveSheet, status: CameraStatus, field: MonitorCaptureField?, enabled: Boolean) {
     val retained = retainedCapturePanelField(field, sheet, status.expoMode)
     if (retained == null) {
-        Text(stringResource(R.string.setting_not_available), color = LiveDesign.muted)
+        Text(pocketText("Setting not available"), color = LiveDesign.muted)
     } else {
         val choices = retained.choices.filter { choice -> when (val value = choice.value) {
             is SettingValue.Iso -> value.value is ISOValue.Manual
@@ -132,16 +131,16 @@ internal fun AppModel.captureAudioService(): CaptureAudioService? {
     val source = CaptureAudioSourceID(snapshot.session, snapshot.epoch)
     val status = session.status.value
     return CaptureAudioService(source, listOf(
-        CaptureAudioField(CaptureAudioControl.CHANNEL, "Channel",
+        CaptureAudioField(CaptureAudioControl.CHANNEL, pocketText("Channel"),
             CaptureAudioChannel.entries.map { CaptureAudioValue.Channel(it) },
             CaptureAudioChannel.entries.firstOrNull { it.raw == status.audioChannel }?.let { CaptureAudioValue.Channel(it) }),
-        CaptureAudioField(CaptureAudioControl.WIND, "Wind",
+        CaptureAudioField(CaptureAudioControl.WIND, pocketText("Wind"),
             listOf(CaptureAudioValue.Wind(false), CaptureAudioValue.Wind(true)),
             status.windNr.takeIf { it in 0..1 }?.let { CaptureAudioValue.Wind(it == 1) }),
-        CaptureAudioField(CaptureAudioControl.DIRECTION, "Direction",
+        CaptureAudioField(CaptureAudioControl.DIRECTION, pocketText("Direction"),
             CaptureAudioDirection.entries.map { CaptureAudioValue.Direction(it) },
             CaptureAudioDirection.entries.firstOrNull { it.raw == status.directionalAudio }?.let { CaptureAudioValue.Direction(it) }),
-        CaptureAudioField(CaptureAudioControl.VOCAL, "Vocal",
+        CaptureAudioField(CaptureAudioControl.VOCAL, pocketText("Vocal"),
             listOf(CaptureAudioValue.Vocal(false), CaptureAudioValue.Vocal(true)),
             status.vocalBoost.takeIf { it in 0..1 }?.let { CaptureAudioValue.Vocal(it == 1) })
     ), commit = { value ->
@@ -149,7 +148,7 @@ internal fun AppModel.captureAudioService(): CaptureAudioService? {
         if (session.connectedCamera?.id != owner || !monitorLayout().audio || current == null ||
             CaptureAudioSourceID(current.session, current.epoch) != source) CaptureAudioCommitResult.UNAVAILABLE
         else if (session.phase != com.opencapture.opencine.vocabulary.ConnectionPhase.LIVE || session.controlBusy.value) {
-            session.presentControlNote("Audio control refused")
+            session.presentControlNote(pocketText("Audio control refused"))
             CaptureAudioCommitResult.REFUSED
         } else {
             when (value) {

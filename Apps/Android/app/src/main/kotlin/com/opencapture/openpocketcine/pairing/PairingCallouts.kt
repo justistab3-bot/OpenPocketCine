@@ -1,5 +1,8 @@
 package com.opencapture.openpocketcine.pairing
 
+import com.opencapture.openpocketcine.pocketText
+import com.opencapture.openpocketcine.pocketUsesChinese
+
 import com.opencapture.opencine.appkit.PermissionGate
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -67,8 +70,8 @@ fun PairingCallouts(model: AppModel, discovery: PermissionGate, onEnableBluetoot
         discovery = discovery,
         copy = PairingCalloutCopy(
             cameraNoun = "Pocket",
-            precheck = StartupConnectionCopy.PAIRING_PRECHECK,
-            stillLooking = StartupConnectionCopy.STILL_LOOKING,
+            precheck = pocketText(StartupConnectionCopy.PAIRING_PRECHECK),
+            stillLooking = if (pocketUsesChinese()) "请关闭 DJI Frame Tap，并强制退出附近手机上的 DJI Mimo。确认相机已开启并激活，然后将手机靠近相机。" else StartupConnectionCopy.STILL_LOOKING,
         ),
         log = DiagnosticCenter::log,
         onEnableBluetooth = onEnableBluetooth,

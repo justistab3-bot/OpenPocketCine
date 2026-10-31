@@ -1,5 +1,7 @@
 package com.opencapture.openpocketcine.lut
 
+import com.opencapture.openpocketcine.pocketText
+
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -18,10 +20,10 @@ import com.opencapture.openpocketcine.bridge.SwiftCore
 internal val AppLutPickerCopy = LutPickerCopy(
     cameraTab = "DJI",
     autoId = LutCatalog.OFFICIAL_AUTO,
-    customHint = "Imported looks land here. Auto stays on Built-in or DJI.",
-    noLookCaption = "No matching look for this color / camera",
-    officialCubeCaption = "Official DJI Rec.709 cube",
-    cameraLooksCaption = "Official DJI looks for this color / camera",
+    customHint = pocketText("Imported looks land here. Auto stays on Built-in or DJI."),
+    noLookCaption = pocketText("No matching look for this color / camera"),
+    officialCubeCaption = pocketText("Official DJI Rec.709 cube"),
+    cameraLooksCaption = pocketText("Official DJI looks for this color / camera"),
 )
 
 private var processLutLibrary: MonitorLutLibrary? = null

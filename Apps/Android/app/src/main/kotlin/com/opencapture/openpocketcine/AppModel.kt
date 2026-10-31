@@ -94,9 +94,6 @@ class AppModel(
     val reviewLaunch: com.opencapture.monitorui.ReviewLaunch? = null,
 ) : GamepadHost, GimbalChromeHost, CaptureSheetHost, OperatorSetupModel, AutoCloseable {
     private val appContext = context.applicationContext
-
-    /** The application context, for operator copy built outside composition. */
-    internal val applicationContext: Context get() = appContext
     /** One actual cache root/lifetime shared by gallery IO and operator settings. */
     val mediaCacheRoot = com.opencapture.opencine.appkit.MonitorMediaCacheRoot(
         java.io.File(appContext.noBackupFilesDir, "OpenPocketCine/media"))
@@ -729,8 +726,8 @@ class AppModel(
             return NearbyCardCopy(
                 FoundCameraIdentity.listTitle(name, model),
                 FoundCameraIdentity.listSubtitle(name, model, found?.model?.family ?: "other") +
-                    if (found?.model?.verified == false) " · unverified" else "",
-                "Needs approval on the camera",
+                    if (found?.model?.verified == false) pocketText(" · unverified") else "",
+                pocketText("Needs approval on the camera"),
             )
         }
         /** The records every earlier build reads, kept mirrored (SHELL-02 D11). */
